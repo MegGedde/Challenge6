@@ -1,0 +1,13 @@
+* {
+    margin: 5px;
+}
+
+.header {
+   text-align: center;
+   background-image: linear-gradient(to right, #1c00d2, #001c5c);
+}
+
+.submitBtn {
+    background-color: #1c00d2;
+    color: white;
+}
