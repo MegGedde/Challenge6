@@ -60,11 +60,11 @@ var getWeather = function(city) {
 
             //temp
             var temp = document.createElement("p")
-            temp.textContent = "Temperature: " + (Math.round((data.main.temp-273.15)*9/5+32)) + " degrees farenheit" ;
+            temp.textContent = "Temperature: " + (Math.round((data.main.temp-273.15)*9/5+32)) + String.fromCharCode(176) + "F" ;
             dailycontainer.append(temp);
             //wind
             var wind = document.createElement("p")
-            wind.textContent = "Wind: " + data.wind.speed + " per hour" ;
+            wind.textContent = "Wind: " + data.wind.speed + " MPH" ;
             dailycontainer.append(wind);
             //humidity
             var humidity = document.createElement("p")
@@ -134,6 +134,7 @@ var getWeather = function(city) {
                             var time = new Date(timeCodeUnix*1000).toLocaleDateString("en-US");
                             var icon = response.list[actualIdx].weather[0].icon;
                             var temp = response.list[actualIdx].main.temp;
+                            var wind = response.list[actualIdx].wind.speed;
                             var humidity = response.list[actualIdx].main.humidity;
                 
                             var cardEl = $("<div>").addClass("col-2 card bg-primary pt-2");
@@ -141,12 +142,14 @@ var getWeather = function(city) {
                             var divEl = $("<div>").addClass("weather-icon");
                             var cardIconEl = $("<img>").addClass("p-2").attr("src","https://openweathermap.org/img/w/" + icon + ".png");
                             var cardTempEl = $("<p>").addClass("card-text").text("Temp: " + temp + " " + String.fromCharCode(176) + "F");
+                            var cardWindEl = $("<p>").addClass("card-text").text("Wind: " + wind + " MPH");
                             var cardHumidityEl = $("<p>").addClass("card-text mb-2").text("Humidity: " + humidity + "%");
                 
                             cardEl.append(cardTitleEl);
                             divEl.append(cardIconEl);
                             cardEl.append(divEl);
                             cardEl.append(cardTempEl);
+                            cardEl.append(cardWindEl);
                             cardEl.append(cardHumidityEl);
                             forecastContainerEl.append(cardEl);
                         }
