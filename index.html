@@ -17,14 +17,16 @@
             <h2>Search for a City:</h2>
             <input name="cityName" id="cityname" type="text" autofocus="true" class="form-input col-11 m-2 rounded" />
             <button class="submitBtn col-11 m-2 rounded">Search</button>
+            <div class="history col-11 m-2 rounded text-center"></div>
         </div>
         <div class="col-8">
             <div class="col-12 cityBox p-0 border border-secondary">
                 <h2 class="city-title"></h2>
                 <div id="icon"><img id="wicon" src="" alt=""></div>
+                <div class="details"></div>
             </div>
-            <div class="forecast">ff</div>
-        </div>
+        <h2>5-Day Forecast:</h2>
+        <div class="row justify-content-between day-forecast"></div>
     </section>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
