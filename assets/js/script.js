@@ -7,53 +7,56 @@ var cityHistory = document.querySelector('.history')
 var key = '00e53e9dd9243b9df5f5b2fc939789ec';
 var dailycontainer = $(".details");
 
-
-var submitHandler = function() {
-        // clear any existing data
-    dailycontainer.html("");
-    var city = cityNameEl.value.trim();
-    if (city) {
-        getWeather(city);
-        getForecast(city)
-        //store city in local storage and display in history list
-    } else {
-        alert("Please enter a city")
-    }
-    //display cities as history buttons
-    var citylist = document.createElement("button")
-    citylist.textContent = city;
-    citylist.classList = "p-2 bg-secondary cityname";
-    cityHistory.appendChild(citylist)
-    //send to local storage
-    // localStorage.setItem(city)
-    // //get item from storage if button clicked
-    // $(".history .cityname").val(localStorage.getItem(city));
-}
-
-// var getFromStorage = function() {
-//     //get item from storage if button clicked
-//     $(".history .cityname").val(localStorage.getItem(city));
-//     submitHandler()
-// }
-
-
-var getWeather = function() {
-    //Display city, date and icon
-    var city = cityNameEl.value.trim();
+//load cities from localstorage
+var loadCity = function() {
+        // get search history from local storage
+        var searchHistory = JSON.parse(localStorage.getItem("searchHistory"));
+        if (searchHistory == null) {
+            // if the search history local variable does not exist then generate the left column with common locations
+            searchHistory = ["Orlando","Atlanta","Dallas","Denver"];
+            localStorage.setItem("searchHistory",JSON.stringify(searchHistory));
+        }
+        var groupContainer = $(".history");
+        groupContainer.html("");
+        for (i in searchHistory) {
+            // generate a list group item for each city in search history
+            var buttonEl = $("<button>")
+                .addClass("list-group-item list-group-item-action bg-secondary m-2")
+                .attr("id", "citySearchList")
+                .attr("type", "button")
+                .text(searchHistory[i]);
+            groupContainer.append(buttonEl);
+        }
+    };
     
+    
+var updateSearchHistory = function(city) {
+        var searchHistory = JSON.parse(localStorage.getItem("searchHistory"));
+        searchHistory.unshift(city);
+        searchHistory.pop();
+        localStorage.setItem("searchHistory",JSON.stringify(searchHistory));
+    
+        // gather all list items
+        var listItems = $(".list-group-item");
+    
+        // Update button text
+        for (l in listItems) {
+            // update text of each item
+            listItems[l].textContent = searchHistory[l];
+        };
+    }
 
+var getWeather = function(city) {
         var key = '00e53e9dd9243b9df5f5b2fc939789ec';
         fetch('https://api.openweathermap.org/data/2.5/weather?q=' + city.toLowerCase() + '&appid=' + key)  
         .then(function(resp) { return resp.json() }) // Convert data to json
         .then(function(data) {
             //Display city and date
-            cityDate.textContent = cityNameEl.value + " (" + moment().format('M/D/YY') + ")"
+            cityDate.textContent = city + " (" + moment().format('M/D/YY') + ")"
 
             //get weather icon
             var iconurl = "http://openweathermap.org/img/w/" + data.weather[0].icon + ".png";
             $('#wicon').attr('src', iconurl);
-
-            console.log(data)
 
             //temp
             var temp = document.createElement("p")
@@ -109,7 +112,7 @@ var getWeather = function() {
         };
     };
 
-            var getForecast = function(cityName) {
+        var getForecast = function(city) {
                 var forecastContainerEl = $(".day-forecast");
                 // clear any existing data
                 forecastContainerEl.html("");
@@ -117,10 +120,8 @@ var getWeather = function() {
                 var apiUrl = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=imperial&appid=" + key;
             
                 fetch(apiUrl).then(function(response) {
-                    // dont need if response ok since already checked earlier
                     response.json().then(function(response) {
-                        // build 
-                        // variable to hold index of the first date change
+                        // build variable to hold index of the first date change
                         var idx = getIndex(response);
                 
                         for (i=0;i<5;i++) {
@@ -154,7 +155,34 @@ var getWeather = function() {
                     alert("Unable to connect to OpenWeather");
                 })
             };
-submitBtn.addEventListener('click', submitHandler)
-// cityname.addEventListener('click', getFromStorage)
+
+var submitHandler = function(event) {
+        // clear any existing data
+    dailycontainer.html("");
+
+    target = $(event.target);
+    targetId = target.attr("id");
+
+    if (targetId === "citySearchList") {
+        var city = target.text();
+
+    } else if (targetId === "search-submit") {
+        var city = $("#cityname").val();
+    };
+   
+    if (city) {
+        getWeather(city);
+        getForecast(city);
+        updateSearchHistory(city);
+        //store city in local storage and display in history list
+    } else {
+        alert("Please enter a city")
+    }
+}
+loadCity()
+
+$("button").click(submitHandler);
+
+
 
 
